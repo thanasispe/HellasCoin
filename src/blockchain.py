@@ -28,6 +28,22 @@ class Blockchain:
         for block in self.chain:
             info.append(block.getBlockInfo())
 
+    def mine(self, block):
+        #attempt to get the hash of the previous block.
+        #this should raise an IndexError if this is the first block.
+        try: block.previous_hash = self.chain[-1].hash()
+        except IndexError: pass
+
+        #loop until nonce that satisifeis difficulty is found
+        while True:
+            if block.hash()[:self.difficulty] == "0" * self.difficulty:
+                self.add(block); break
+            else:
+                #increase the nonce by one and try again
+                block.nonce += 1
+
+    def getChainLen(self):
+        return len(self.chain)
 
 class Block:
     def __init__(self,index,time, transactions):
@@ -51,20 +67,6 @@ class Block:
         info = []
 
         info.append(self.hash)
-
-	def mineBlock(self, difficulty):
-        arr = []
-
-		
-		#compute until the beginning of the hash = 0123..difficulty
-		arrStr = map(str, arr);  
-		hashPuzzle = ''.join(arrStr)
-		#print(len(hashPuzzle));
-		while self.hash[0:difficulty] != hashPuzzle:
-			self.nonse += 1
-			self.hash = self.calculateHash()
-		print("Block Mined!")
-		return True
 
 class Transaction:
     def __init__(self,sender,reciever,amt):
